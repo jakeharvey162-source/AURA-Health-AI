@@ -1,0 +1,16 @@
+personas:
+  - id: low-literacy-rural-patient
+    traits: [reads-little, voice-first, intermittent-connectivity, needs-large-actions]
+    task: report a new symptom offline and understand what to do next
+  - id: pregnant-patient-stressed
+    traits: [impatient, anxious, one-handed-mobile-use]
+    task: report severe headache and high blood pressure and find urgent action
+  - id: clinician-overloaded
+    traits: [time-poor, scans-not-reads]
+    task: identify the patient needing review and understand why in under 20 seconds
+  - id: code-switching-patient
+    traits: [english-plus-african-language, speech-first]
+    task: report a medication problem; uncertain medical terms must be confirmed
+  - id: older-low-vision-user
+    traits: [large-text, keyboard-or-assistive-tech]
+    task: navigate critical patient flow without relying on color alone

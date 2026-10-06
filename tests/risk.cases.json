@@ -1,0 +1,32 @@
+[
+  {
+    "name": "maternal headache and elevated bp",
+    "bp": 151,
+    "text": "severe headache and swelling",
+    "expected": "urgent"
+  },
+  {
+    "name": "bleeding",
+    "bp": 120,
+    "text": "vaginal bleeding",
+    "expected": "urgent"
+  },
+  {
+    "name": "blurred vision",
+    "bp": 125,
+    "text": "blurred vision",
+    "expected": "urgent"
+  },
+  {
+    "name": "non-specific nausea",
+    "bp": 118,
+    "text": "some nausea",
+    "expected": "watch"
+  },
+  {
+    "name": "routine",
+    "bp": 118,
+    "text": "feeling okay today",
+    "expected": "routine"
+  }
+]
