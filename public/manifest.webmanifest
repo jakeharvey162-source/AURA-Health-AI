@@ -1,0 +1,9 @@
+{
+  "name": "AURA Health AI",
+  "short_name": "AURA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07110d",
+  "theme_color": "#0b6b46",
+  "description": "Offline-first health early-warning and care continuity."
+}
