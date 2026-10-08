@@ -14,3 +14,5 @@ test('nonfinite speech confidence requires confirmation',()=>{for(const confiden
 test('spoken measurements require confirmation even at high confidence',()=>{assert.equal(reviewTranscript([{kind:'measurement',value:'blood pressure reading',confidence:1}])[0].requiresConfirmation,true)});
 
 test('handoff does not present invalid pregnancy weeks as clinical fact',()=>{for(const weeks of [NaN,-2,Infinity,50]){assert.equal(buildEmergencyHandoff({pregnancyWeeks:weeks,symptoms:[]}).pregnancy,'Not provided')}});
+
+test('spoken medication frequency requires explicit confirmation',()=>{assert.equal(reviewTranscript([{kind:'frequency',value:'twice daily',confidence:1}])[0].requiresConfirmation,true)});
