@@ -12,3 +12,5 @@ test('handoff preserves verification notice and supplied facts',()=>{const h=bui
 
 test('nonfinite speech confidence requires confirmation',()=>{for(const confidence of [NaN,Infinity,-Infinity,-0.1,1.1]){assert.equal(reviewTranscript([{kind:'symptom',value:'headache',confidence}])[0].requiresConfirmation,true)}});
 test('spoken measurements require confirmation even at high confidence',()=>{assert.equal(reviewTranscript([{kind:'measurement',value:'blood pressure reading',confidence:1}])[0].requiresConfirmation,true)});
+
+test('handoff does not present invalid pregnancy weeks as clinical fact',()=>{for(const weeks of [NaN,-2,Infinity,50]){assert.equal(buildEmergencyHandoff({pregnancyWeeks:weeks,symptoms:[]}).pregnancy,'Not provided')}});
