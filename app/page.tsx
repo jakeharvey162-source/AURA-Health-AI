@@ -5,7 +5,7 @@ import {assessMaternalRisk} from '../lib/risk';import {saveLocal} from '../lib/o
 type Mode='patient'|'clinician'|'carebridge'|'access';
 export default function Home(){
  const[mode,setMode]=useState<Mode>('patient');const[symptom,setSymptom]=useState('I have had a severe headache since yesterday and my feet are more swollen.');const[sys,setSys]=useState(151);const[dia,setDia]=useState(96);const[saved,setSaved]=useState(false);const[handoff,setHandoff]=useState<string|null>(null);const[planConfirmed,setPlanConfirmed]=useState(false);const[teachback,setTeachback]=useState('');const[copied,setCopied]=useState(false);
- const risk=useMemo(()=>assessMaternalRisk([{type:'bp',value:sys},{type:'symptom',text:symptom}]),[sys,symptom]);
+ const risk=useMemo(()=>assessMaternalRisk([{type:'bp',value:sys},{type:'bp_diastolic',value:dia},{type:'symptom',text:symptom}]),[sys,dia,symptom]);
  async function save(){await saveLocal('health-signal',{symptom,bloodPressure:{systolic:sys,diastolic:dia},risk,source:'patient',verification:'unverified'});setSaved(true)}
  function makeHandoff(){const h=buildEmergencyHandoff({pregnancyWeeks:31,symptoms:[symptom],bp:`${sys}/${dia} mmHg`});setHandoff(JSON.stringify(h,null,2))}
  async function copyHandoff(){if(!handoff)return;await navigator.clipboard?.writeText(handoff);setCopied(true)}
