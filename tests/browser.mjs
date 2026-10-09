@@ -42,7 +42,7 @@ try{
    await page.getByRole('spinbutton',{name:'Systolic blood pressure'}).fill('145');
    assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isEnabled(),true);
    await page.getByRole('button',{name:'Save this check-in'}).click();
-   assert.equal(await page.getByRole('button',{name:/Check-in saved/}).isVisible(),true);
+   await page.getByRole('button',{name:/Check-in saved/}).waitFor({state:'visible'});
    const stored = await page.evaluate(async()=>{
      const db=await new Promise((resolve,reject)=>{const q=indexedDB.open('aura-local');q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)});
      return await new Promise((resolve,reject)=>{const q=db.transaction('events','readonly').objectStore('events').getAll();q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)});
