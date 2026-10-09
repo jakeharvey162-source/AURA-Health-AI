@@ -27,6 +27,10 @@ try{
    page.on('pageerror',e=>errors.push(e.message));
    await page.goto(origin,{waitUntil:'networkidle'});
    assert.equal(await page.getByRole('heading',{name:/Feel more in control/i}).count(),1);
+   assert.equal(await page.locator('.hero-art .care-photo').count(),1,'Doctor image element exists');
+   assert.equal(await page.locator('.hero-art .art-card').count(),2,'Glass hero cards render');
+   const theme=await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor);
+   assert.ok(theme,'Theme styling is available');
    assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isEnabled(),true);
    assert.equal(await page.getByRole('checkbox',{name:'I have a blood-pressure reading'}).isChecked(),false);
    await page.getByRole('button',{name:'I have a severe headache'}).click();
@@ -58,6 +62,7 @@ try{
    await page.getByRole('button',{name:'My check-in',exact:true}).click();
    await page.getByRole('button',{name:'My account'}).click();
    assert.equal(await page.getByRole('heading',{name:'Your private health journal'}).isVisible(),true);
+   assert.equal(await page.locator('#aura-account .account-security').isVisible(),true,'Privacy reminder is visible');
    await page.getByRole('button',{name:'Create account'}).click();
    assert.match(await page.locator('.account-panel [role=status]').innerText(),/valid email/i);
    assert.deepEqual(errors,[], 'No uncaught client-side exceptions');
