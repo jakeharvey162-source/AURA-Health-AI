@@ -40,6 +40,13 @@ try{
    assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isDisabled(),true);
    await page.getByRole('spinbutton',{name:'Systolic blood pressure'}).fill('145');
    assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isEnabled(),true);
+   await page.getByRole('button',{name:'Save this check-in'}).click();
+   assert.equal(await page.getByRole('button',{name:/Check-in saved/}).isVisible(),true);
+   const stored = await page.evaluate(async()=>{
+     const db=await new Promise((resolve,reject)=>{const q=indexedDB.open('aura-local');q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)});
+     return await new Promise((resolve,reject)=>{const q=db.transaction('events','readonly').objectStore('events').getAll();q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)});
+   });
+   assert.ok(stored.some(x=>x.payload?.bloodPressure?.systolic===145),'Offline check-in was persisted in IndexedDB');
    await page.getByRole('button',{name:'My care plan',exact:true}).click();
    assert.equal(await page.getByRole('heading',{name:'Know what happens next'}).isVisible(),true);
    await page.getByRole('button',{name:'I understand my follow-up'}).click();
