@@ -28,6 +28,8 @@ try{
    await page.goto(origin,{waitUntil:'networkidle'});
    assert.equal(await page.getByRole('heading',{name:/Feel more in control/i}).count(),1);
    assert.equal(await page.locator('.hero-art .care-photo').count(),1,'Doctor image element exists');
+   const photoLoaded=await page.locator('.care-photo').evaluate(img=>img.complete&&img.naturalWidth>0);
+   console.log('CARE PHOTO '+(photoLoaded?'LOADED':'REMOTE IMAGE UNAVAILABLE')+' at '+viewport.width+'px');
    assert.equal(await page.locator('.hero-art .art-card').count(),2,'Glass hero cards render');
    const theme=await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor);
    assert.ok(theme,'Theme styling is available');
