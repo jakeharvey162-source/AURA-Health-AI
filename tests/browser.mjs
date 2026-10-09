@@ -63,8 +63,22 @@ try{
    assert.deepEqual(errors,[], 'No uncaught client-side exceptions');
    const horizontalOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+2);
    assert.equal(horizontalOverflow,false,'No horizontal viewport overflow');
+   await page.getByRole('combobox',{name:'Language'}).selectOption('fr');
+   assert.equal(await page.getByRole('heading',{name:/Prenez davantage soin/i}).isVisible(),true);
+   await page.getByRole('button',{name:'J’ai très mal à la tête'}).click();
+   assert.equal(await page.getByText('Une consultation médicale peut être nécessaire').isVisible(),true);
+   assert.equal(await page.getByRole('button',{name:'Enregistrer ce bilan'}).isVisible(),true);
+   await page.reload({waitUntil:'networkidle'});
+   assert.equal(await page.getByRole('combobox',{name:'Language'}).inputValue(),'fr');
+   await page.getByRole('combobox',{name:'Language'}).selectOption('zu');
+   assert.equal(await page.getByRole('heading',{name:/Nakekela kangcono/i}).isVisible(),true);
+   await page.getByRole('button',{name:'Ngiphethwe ikhanda elibuhlungu kakhulu'}).click();
+   assert.equal(await page.getByText('Ungase udinge usizo lwezempilo').isVisible(),true);
+   assert.deepEqual(errors,[], 'No uncaught exceptions after language changes');
+   const overflowAfterTranslation=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+2);
+   assert.equal(overflowAfterTranslation,false,'No horizontal overflow in translated layout');
    await page.close();
-   console.log('PASS patient browser walkthrough at '+viewport.width+'px');
+   console.log('PASS patient and multilingual browser walkthrough at '+viewport.width+'px');
  }
 }finally{
  await browser?.close();
