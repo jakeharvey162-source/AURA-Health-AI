@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 
 const port = 3217;
 const origin = `http://127.0.0.1:${port}`;
-const server = spawn('npm', ['run', 'start', '--', '-p', String(port)], {stdio:'pipe',env:{...process.env,NEXT_TELEMETRY_DISABLED:'1'}});
+const server = spawn('npm', ['run', 'start', '--', '-p', String(port)], {stdio:'pipe',detached:true,env:{...process.env,NEXT_TELEMETRY_DISABLED:'1'}});
 let logs='';
 server.stdout.on('data',x=>{logs+=x.toString()});
 server.stderr.on('data',x=>{logs+=x.toString()});
@@ -22,6 +22,7 @@ try{
  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
  for(const viewport of [{width:1365,height:850},{width:390,height:844}]){
    const page=await browser.newPage({viewport});
+   page.setDefaultTimeout(8000);
    const errors=[];
    page.on('pageerror',e=>errors.push(e.message));
    await page.goto(origin,{waitUntil:'networkidle'});
@@ -67,5 +68,5 @@ try{
  }
 }finally{
  await browser?.close();
- server.kill('SIGTERM');
+ try{process.kill(-server.pid,'SIGTERM')}catch{server.kill('SIGTERM')}
 }
