@@ -40,14 +40,14 @@ try{
    assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isDisabled(),true);
    await page.getByRole('spinbutton',{name:'Systolic blood pressure'}).fill('145');
    assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isEnabled(),true);
-   await page.getByRole('button',{name:'My care plan'}).click();
+   await page.getByRole('button',{name:'My care plan',exact:true}).click();
    assert.equal(await page.getByRole('heading',{name:'Know what happens next'}).isVisible(),true);
    await page.getByRole('button',{name:'I understand my follow-up'}).click();
    await page.getByRole('textbox',{name:'Teach back the care plan'}).fill('In two weeks');
    assert.match(await page.locator('[role=status]').last().innerText(),/matches/i);
    await page.getByRole('button',{name:'Accessibility'}).click();
    assert.equal(await page.getByRole('heading',{name:'Built for more people'}).isVisible(),true);
-   await page.getByRole('button',{name:'My check-in'}).click();
+   await page.getByRole('button',{name:'My check-in',exact:true}).click();
    await page.getByRole('button',{name:'My account'}).click();
    assert.equal(await page.getByRole('heading',{name:'Your private health journal'}).isVisible(),true);
    await page.getByRole('button',{name:'Create account'}).click();
