@@ -12,7 +12,34 @@ export default function Home(){
  const risk=useMemo(()=>assessMaternalRisk([...(hasReading?[{type:'bp' as const,value:sys},{type:'bp_diastolic' as const,value:dia}]:[]),...(symptom.trim()?[{type:'symptom' as const,text:normalizedSymptom}]:[])]),[sys,dia,normalizedSymptom,hasReading]);
  useEffect(()=>{setLocale(detectLocale(window.localStorage.getItem('aura-language')))},[]);
  function changeLocale(value:AuraLocale){const previous=locale;setLocale(value);window.localStorage.setItem('aura-language',value);if('speechSynthesis'in window)window.speechSynthesis.cancel();setVoicePlaying(false);setVoiceStatus('');setSymptom(current=>{const index=knownSymptoms.findIndex(key=>current===translations[previous][key]);return index<0?current:translations[value][knownSymptoms[index]]});setHandoff(null);setSaved(false)}
- function readGuidance(){if(!('speechSynthesis'in window)){setVoiceStatus(t('noVoice'));return;}if(voicePlaying){window.speechSynthesis.cancel();setVoicePlaying(false);setVoiceStatus('');return;}const speech=window.speechSynthesis;const speechCode=languages.find(x=>x.code===locale)?.speech??'en-ZA';const selected=speech.getVoices().find(v=>v.lang.toLowerCase()===speechCode.toLowerCase())??speech.getVoices().find(v=>v.lang.toLowerCase().startsWith(locale==='zu'?'zu':locale));if(!selected){setVoiceStatus(t('voiceUnavailable'));return;}const utterance=new SpeechSynthesisUtterance(risk.level==='urgent'?t('urgentText'):t('regularText'));utterance.lang=speechCode;utterance.voice=selected;utterance.rate=.92;utterance.onstart=()=>{setVoicePlaying(true);setVoiceStatus(t('readingVoice'))};utterance.onend=()=>{setVoicePlaying(false);setVoiceStatus(t('finishedVoice'))};utterance.onerror=()=>{setVoicePlaying(false);setVoiceStatus(t('failedVoice'))};speech.cancel();speech.speak(utterance)}
+ function readGuidance(){
+  if(!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window)){setVoiceStatus(t('noVoice'));return;}
+  const speech=window.speechSynthesis;
+  if(voicePlaying||speech.speaking||speech.pending){speech.cancel();setVoicePlaying(false);setVoiceStatus('');return;}
+  const speechCode=languages.find(x=>x.code===locale)?.speech??'en-ZA';
+  const voices=speech.getVoices();
+  const languageCode=locale.toLowerCase();
+  const localVoice=voices.find(v=>v.lang.toLowerCase()===speechCode.toLowerCase())
+    ??voices.find(v=>v.lang.toLowerCase().split('-')[0]===languageCode);
+  const englishVoice=voices.find(v=>v.lang.toLowerCase()==='en-za')
+    ??voices.find(v=>v.lang.toLowerCase().startsWith('en'));
+  const useEnglishFallback=locale!=='en'&&!localVoice&&Boolean(englishVoice);
+  const guidanceKey=risk.level==='urgent'?'urgentText':'regularText';
+  const spokenText=useEnglishFallback?translations.en[guidanceKey]:t(guidanceKey);
+  const utterance=new SpeechSynthesisUtterance(spokenText);
+  utterance.lang=useEnglishFallback?'en-ZA':speechCode;
+  if(localVoice)utterance.voice=localVoice;
+  else if(useEnglishFallback&&englishVoice)utterance.voice=englishVoice;
+  utterance.rate=.92;
+  const fallbackNotice=useEnglishFallback?t('voiceFallbackEnglish'):!localVoice&&locale!=='en'?t('voiceDeviceFallback'):'';
+  setVoiceStatus(fallbackNotice||t('readingVoice'));
+  setVoicePlaying(true);
+  utterance.onstart=()=>{setVoicePlaying(true);setVoiceStatus(fallbackNotice||t('readingVoice'))};
+  utterance.onend=()=>{setVoicePlaying(false);setVoiceStatus(fallbackNotice||t('finishedVoice'))};
+  utterance.onerror=(event)=>{setVoicePlaying(false);setVoiceStatus(event.error==='not-allowed'?t('voiceBlocked'):t('failedVoice'))};
+  speech.cancel();
+  try{speech.speak(utterance)}catch{setVoicePlaying(false);setVoiceStatus(t('failedVoice'))}
+ }
  useEffect(()=>{const db=getSupabase();if(!db)return;let active=true;db.auth.getUser().then(({data})=>{if(active)setCloudUser(data.user?.id??'')}).catch(()=>{});const {data:listener}=db.auth.onAuthStateChange((_event,session)=>{if(active){setCloudUser(session?.user?.id??'');if(!session){setHistory([]);setCloudUser('')}}});return()=>{active=false;listener.subscription.unsubscribe()}},[]);
  async function loadHistory(){const db=getSupabase();if(!db)return;setHistoryBusy(true);try{const {data:{user},error:authError}=await db.auth.getUser();if(authError||!user)throw new Error('Please sign in first.');const {data,error}=await db.from('health_events').select('id,created_at,payload').eq('user_id',user.id).eq('event_type','patient_checkin').order('created_at',{ascending:false}).limit(10);if(error)throw error;setHistory((data??[]) as typeof history);setCloudStatus(data?.length?'Your recent check-ins are ready.':'No saved check-ins yet.')}catch(e){setCloudStatus(e instanceof Error?e.message:'Could not load your check-ins')}finally{setHistoryBusy(false)}}
  async function cloudSignOut(){const db=getSupabase();if(!db)return;const {error}=await db.auth.signOut();if(error){setCloudStatus(error.message);return;}setCloudUser('');setHistory([]);setCloudStatus('Signed out of your account.')}
