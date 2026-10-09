@@ -43,7 +43,10 @@ const en={
   speechFallback:'Speech in this language depends on voices installed on your device. If unavailable, read the text on screen.',
   englishRules:'Clinical rule explanations and exported summaries currently remain in English.',
   skip:'Skip to your health check-in', pace:'Your health, at your pace',
-  voiceUnavailable:'A speech voice for this language is unavailable. Try reading the text or switching to English.'
+  voiceUnavailable:'A speech voice for this language is unavailable. Try reading the text or switching to English.',
+  voiceFallbackEnglish:'Your device does not have a voice for this language, so guidance is being read in English.',
+  voiceDeviceFallback:'Trying your device’s speech engine in this language. Pronunciation may vary.',
+  voiceBlocked:'Your browser blocked speech. Check sound settings and try again.'
 };
 const fr:typeof en={
   langLabel:'Langue',heroEyebrow:'UN PEU DE SOUTIEN, CHAQUE JOUR',heroTitle:'Prenez davantage soin',heroAccent:'de votre santé.',
@@ -83,7 +86,10 @@ const fr:typeof en={
   speechFallback:'La lecture vocale dépend des voix disponibles sur votre appareil.',
   englishRules:'Les explications des règles cliniques et les résumés exportés restent en anglais.',
   skip:'Aller au bilan de santé',pace:'Votre santé, à votre rythme',
-  voiceUnavailable:'Aucune voix disponible pour cette langue. Lisez le texte ou passez à l’anglais.'
+  voiceUnavailable:'Aucune voix disponible pour cette langue. Lisez le texte ou passez à l’anglais.',
+  voiceFallbackEnglish:'Aucune voix dans cette langue sur cet appareil : les conseils sont lus en anglais.',
+  voiceDeviceFallback:'Essai de la synthèse vocale de votre appareil. La prononciation peut varier.',
+  voiceBlocked:'Le navigateur a bloqué la lecture vocale. Vérifiez les paramètres audio et réessayez.'
 };
 const zu:typeof en={
   langLabel:'Ulimi',heroEyebrow:'USIZO OLUNCANE NSUKU ZONKE',heroTitle:'Nakekela kangcono',heroAccent:'impilo yakho.',
@@ -123,7 +129,10 @@ const zu:typeof en={
   speechFallback:'Ukufundwa ngezwi kuncike emazwini akhona kudivayisi yakho.',
   englishRules:'Izincazelo zemithetho yezokwelapha nezifinyezo ziseseNgisini.',
   skip:'Yeqela ekuhloleni impilo',pace:'Impilo yakho, ngesikhathi sakho',
-  voiceUnavailable:'Alikho izwi lalolu limi kudivayisi yakho. Funda umbhalo noma ushintshele esiNgisini.'
+  voiceUnavailable:'Alikho izwi lalolu limi kudivayisi yakho. Funda umbhalo noma ushintshele esiNgisini.',
+  voiceFallbackEnglish:'Ayikho inkulumo yalolu limi kudivayisi yakho, ngakho iseluleko sifundwa ngesiNgisi.',
+  voiceDeviceFallback:'Sizama ukufunda ngedivayisi yakho. Ukuphimisela kungase kwehluke.',
+  voiceBlocked:'Isiphequluli sivimbele umsindo. Hlola izilungiselelo zomsindo bese uzama futhi.'
 };
 export const translations={en,fr,zu};
 export type TranslationKey=keyof typeof en;
