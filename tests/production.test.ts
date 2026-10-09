@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {assessMaternalRisk} from '../lib/risk';import {requireEvidence,evidenceIsStale} from '../lib/grounding';import {reviewTranscript} from '../lib/voiceSafety';import {safeBaseline,needsClinicalVerification,type PatientDatum} from '../lib/patientData';import {buildEmergencyHandoff} from '../lib/emergencyHandoff';
+import test from 'node:test';import {checkFollowUpTeachback} from '../lib/teachback';import assert from 'node:assert/strict';import {assessMaternalRisk} from '../lib/risk';import {requireEvidence,evidenceIsStale} from '../lib/grounding';import {reviewTranscript} from '../lib/voiceSafety';import {safeBaseline,needsClinicalVerification,type PatientDatum} from '../lib/patientData';import {buildEmergencyHandoff} from '../lib/emergencyHandoff';
 test('production maternal rule escalates configured demo pattern',()=>{const r=assessMaternalRisk([{type:'bp',value:151},{type:'symptom',text:'severe headache'}]);assert.equal(r.level,'urgent');assert.ok(r.reasons.length>=1)});
 test('routine input does not fabricate urgency',()=>assert.equal(assessMaternalRisk([{type:'symptom',text:'I feel normal today'}]).level,'routine'));
 test('grounding abstains without evidence',()=>assert.equal(requireEvidence('answer',[]).status,'abstain'));
@@ -19,3 +19,6 @@ test('spoken medication frequency requires explicit confirmation',()=>{assert.eq
 
 test('diastolic-only elevated reading triggers configured review',()=>{const r=assessMaternalRisk([{type:'bp',value:125},{type:'bp_diastolic',value:96}]);assert.equal(r.level,'urgent')});
 test('invalid BP does not get labelled routine',()=>{for(const value of [NaN,Infinity,-1,0,999]){const r=assessMaternalRisk([{type:'bp',value},{type:'bp_diastolic',value:80}]);assert.equal(r.level,'watch');assert.match(r.reasons.join(' '),/invalid/i)}});
+
+test('CareBridge accepts exactly two weeks only after confirmation',()=>{assert.equal(checkFollowUpTeachback('I will return in two weeks',true).status,'match');assert.equal(checkFollowUpTeachback('follow up in 2 weeks',true).status,'match');assert.equal(checkFollowUpTeachback('in two weeks',false).status,'waiting')});
+test('CareBridge rejects negated, contradictory and ambiguous timing',()=>{for(const phrase of ['not in two weeks','in three weeks','in 2 days','in 2 weeks or 3 weeks','I will return soon','I will not return in 2 weeks'])assert.equal(checkFollowUpTeachback(phrase,true).status,'clarify',phrase)});
