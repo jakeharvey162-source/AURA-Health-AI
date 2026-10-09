@@ -29,3 +29,20 @@ body{background:var(--bg);font-family:Arial,Helvetica,sans-serif}
 @media(max-width:800px){.wrap{padding:16px}.site-header{gap:8px}.header-trust{display:none}.brand{font-size:20px}.hero{grid-template-columns:1fr;gap:24px;padding:34px 0}.hero-art{min-height:260px}.sun-orb{width:170px;height:170px;left:calc(50% - 85px);top:15px}.art-card{padding:11px;font-size:12px}.big{letter-spacing:-2px;font-size:46px}.section-intro{display:block}.section-intro h2{font-size:26px}.card{padding:20px}.nav{overflow-x:auto}}
 
 .journal-history{margin-top:16px;border-top:1px solid var(--line);padding-top:16px}.journal-item{padding:13px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:6px 12px}.journal-item p{grid-column:1/-1;margin:0;color:var(--muted);overflow-wrap:anywhere}.handoff-weeks{display:block;font-size:14px;font-weight:700;margin:15px 0}.handoff-weeks input{margin-top:8px}.account-panel button{margin-top:8px}@media(max-width:600px){.header-actions .net{display:none}.hero-actions .btn{width:100%;justify-content:center}.hero-art{min-height:240px}.metric .bp{width:80px}.journal-item{font-size:14px}}
+
+
+/* Patient-focused interaction polish */
+.quick-symptoms{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.symptom-chip{border:1px solid #bed9c9;background:#f3faf5;color:#235944;border-radius:999px;padding:10px 13px;font-size:13px;font-weight:650;min-height:44px;cursor:pointer;transition:background .16s,border-color .16s,transform .16s}
+.symptom-chip:hover{background:#dff2e6;border-color:#69b58f;transform:translateY(-1px)}
+.symptom-chip:focus-visible{outline:3px solid #69c99a;outline-offset:2px}
+.voice-feedback{font-size:13px;color:var(--muted);margin:8px 0}
+.account-panel{background:linear-gradient(135deg,#f3fbf6,#fffdf8);border:1px solid #c5e0ce;box-shadow:0 10px 32px rgba(21,78,51,.045)}
+.account-panel .row{gap:10px}.account-panel .btn{min-height:46px}
+.hero-art:after{content:'';position:absolute;left:12%;top:8%;width:36px;height:36px;border-radius:50%;border:8px solid rgba(255,255,255,.5)}
+.card{transition:border-color .18s,box-shadow .18s}
+.card:focus-within{border-color:#a8d0b8;box-shadow:0 10px 35px rgba(25,85,53,.08)}
+.result.routine{border-left:5px solid #2b9975}
+.metric input[type=checkbox]{width:20px;height:20px;vertical-align:middle;accent-color:var(--green);margin-right:6px}
+@media(max-width:600px){.quick-symptoms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.symptom-chip{border-radius:13px;text-align:left;font-size:12px}.hero-copy .lead{font-size:17px}.account-panel{padding:15px}}
+@media(prefers-reduced-motion:reduce){.symptom-chip:hover{transform:none}}
