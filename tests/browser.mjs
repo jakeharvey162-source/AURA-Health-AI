@@ -81,6 +81,23 @@ try{
    assert.equal(await page.getByRole('heading',{name:/Nakekela kangcono/i}).isVisible(),true);
    await page.getByRole('button',{name:'Ngiphethwe ikhanda elibuhlungu kakhulu'}).click();
    assert.equal(await page.getByText('Ungase udinge usizo lwezempilo').isVisible(),true);
+   // Some devices report zero voices until the OS speech engine initializes.
+   // AURA should attempt native speech rather than show a premature unavailable error.
+   await page.evaluate(()=>{
+     window.__auraSpoken=null;
+     const engine=window.speechSynthesis;
+     Object.defineProperty(engine,'getVoices',{configurable:true,value:()=>[]});
+     Object.defineProperty(engine,'speak',{configurable:true,value:utterance=>{
+       window.__auraSpoken={text:utterance.text,lang:utterance.lang};
+       utterance.dispatchEvent(new Event('start'));
+       utterance.dispatchEvent(new Event('end'));
+     }});
+   });
+   await page.getByRole('button',{name:'Lalela iseluleko'}).click();
+   const speechAttempt=await page.evaluate(()=>window.__auraSpoken);
+   assert.equal(speechAttempt?.lang,'zu-ZA','No-voice devices still attempt language-specific browser speech');
+   assert.match(speechAttempt?.text??'',/Izimpendulo zakho/,'Zulu guidance was passed to speech engine');
+   assert.equal(await page.getByText(/Alikho izwi lalolu limi kudivayisi yakho/).count(),0,'No premature unavailable-voice warning');
    assert.deepEqual(errors,[], 'No uncaught exceptions after language changes');
    const overflowAfterTranslation=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+2);
    assert.equal(overflowAfterTranslation,false,'No horizontal overflow in translated layout');
