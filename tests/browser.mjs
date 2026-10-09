@@ -1,0 +1,64 @@
+import {chromium} from 'playwright';
+import {spawn} from 'node:child_process';
+import assert from 'node:assert/strict';
+
+const port = 3217;
+const origin = `http://127.0.0.1:${port}`;
+const server = spawn('npm', ['run', 'start', '--', '-p', String(port)], {stdio:'pipe',env:{...process.env,NEXT_TELEMETRY_DISABLED:'1'}});
+let logs='';
+server.stdout.on('data',x=>{logs+=x.toString()});
+server.stderr.on('data',x=>{logs+=x.toString()});
+async function ready(){
+  for(let i=0;i<60;i++){
+    if(server.exitCode!==null)throw Error('Next server exited: '+logs.slice(-2000));
+    try{const r=await fetch(origin);if(r.ok)return}catch{}
+    await new Promise(r=>setTimeout(r,500));
+  }
+  throw Error('Next server did not start: '+logs.slice(-2000));
+}
+let browser;
+try{
+ await ready();
+ browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ for(const viewport of [{width:1365,height:850},{width:390,height:844}]){
+   const page=await browser.newPage({viewport});
+   const errors=[];
+   page.on('pageerror',e=>errors.push(e.message));
+   await page.goto(origin,{waitUntil:'networkidle'});
+   assert.equal(await page.getByRole('heading',{name:/Feel more in control/i}).count(),1);
+   assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isEnabled(),true);
+   assert.equal(await page.getByRole('checkbox',{name:'I have a blood-pressure reading'}).isChecked(),false);
+   await page.getByRole('button',{name:'I have a severe headache'}).click();
+   assert.equal(await page.getByText('You may need medical attention').isVisible(),true);
+   await page.getByRole('spinbutton',{name:'Weeks pregnant'}).fill('32');
+   await page.getByRole('button',{name:/Prepare a note for my care team/}).click();
+   assert.equal(await page.getByRole('heading',{name:'Your care summary'}).isVisible(),true);
+   assert.match(await page.locator('.handoff').innerText(),/32 weeks/);
+   await page.getByRole('checkbox',{name:'I have a blood-pressure reading'}).check();
+   await page.getByRole('spinbutton',{name:'Systolic blood pressure'}).fill('90');
+   await page.getByRole('spinbutton',{name:'Diastolic blood pressure'}).fill('110');
+   assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isDisabled(),true);
+   await page.getByRole('spinbutton',{name:'Systolic blood pressure'}).fill('145');
+   assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isEnabled(),true);
+   await page.getByRole('button',{name:'My care plan'}).click();
+   assert.equal(await page.getByRole('heading',{name:'Know what happens next'}).isVisible(),true);
+   await page.getByRole('button',{name:'I understand my follow-up'}).click();
+   await page.getByRole('textbox',{name:'Teach back the care plan'}).fill('In two weeks');
+   assert.match(await page.locator('[role=status]').last().innerText(),/matches/i);
+   await page.getByRole('button',{name:'Accessibility'}).click();
+   assert.equal(await page.getByRole('heading',{name:'Built for more people'}).isVisible(),true);
+   await page.getByRole('button',{name:'My check-in'}).click();
+   await page.getByRole('button',{name:'My account'}).click();
+   assert.equal(await page.getByRole('heading',{name:'Your private health journal'}).isVisible(),true);
+   await page.getByRole('button',{name:'Create account'}).click();
+   assert.match(await page.locator('.account-panel [role=status]').innerText(),/valid email/i);
+   assert.deepEqual(errors,[], 'No uncaught client-side exceptions');
+   const horizontalOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+2);
+   assert.equal(horizontalOverflow,false,'No horizontal viewport overflow');
+   await page.close();
+   console.log('PASS patient browser walkthrough at '+viewport.width+'px');
+ }
+}finally{
+ await browser?.close();
+ server.kill('SIGTERM');
+}
