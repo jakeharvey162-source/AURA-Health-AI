@@ -54,6 +54,7 @@ try{
    await page.goto(origin+'/?sos=1',{waitUntil:'networkidle'});
    assert.equal(await page.getByRole('dialog',{name:'Emergency help'}).isVisible(),true,'Installed shortcut opens emergency screen');
    await page.getByRole('button',{name:'Close emergency panel'}).click();
+   assert.equal(new URL(page.url()).searchParams.has('sos'),false,'Close clears SOS shortcut so the next reload stays closed');
 
    assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isEnabled(),true);
    assert.equal(await page.getByRole('checkbox',{name:'I have a blood-pressure reading'}).isChecked(),false);
