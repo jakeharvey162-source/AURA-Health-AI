@@ -33,6 +33,22 @@ try{
    assert.equal(await page.locator('.hero-art .art-card').count(),2,'Glass hero cards render');
    const theme=await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor);
    assert.ok(theme,'Theme styling is available');
+   // AURA emergency action must be reachable before login and without a symptom.
+   await page.getByRole('button',{name:'Emergency SOS'}).click();
+   await assert.equal(await page.getByRole('dialog',{name:'Emergency help'}).isVisible(),true);
+   const dial=page.getByRole('link',{name:/Open emergency dialer/});
+   assert.equal(await dial.getAttribute('href'),'tel:112','Emergency action opens user-controlled dialer');
+   assert.equal(await page.getByText(/Status: Not sent to ambulance or hospital by AURA/).isVisible(),true);
+   const copy=page.getByRole('button',{name:'Copy summary'});
+   assert.equal(await copy.isDisabled(),true,'Patient must opt into copying private emergency information');
+   await page.getByRole('button',{name:'Possible labour / painful contractions'}).click();
+   assert.match(await page.getByLabel('Emergency patient summary').innerText(),/possible labour/i);
+   await page.getByRole('radio',{name:'Another country'}).check();
+   assert.equal(await page.getByRole('link',{name:/Open emergency dialer/}).count(),0,'No hard-coded SA dialer in other country');
+   await page.getByRole('textbox',{name:'Enter the official local emergency number'}).fill('999');
+   assert.equal(await page.getByRole('link',{name:/Open emergency dialer/}).getAttribute('href'),'tel:999');
+   await page.getByRole('button',{name:'Close emergency panel'}).click();
+   assert.equal(await page.getByRole('dialog',{name:'Emergency help'}).count(),0);
    assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isEnabled(),true);
    assert.equal(await page.getByRole('checkbox',{name:'I have a blood-pressure reading'}).isChecked(),false);
    await page.getByRole('button',{name:'I have a severe headache'}).click();
