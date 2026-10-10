@@ -79,6 +79,21 @@ try{
      return await new Promise((resolve,reject)=>{const q=db.transaction('events','readonly').objectStore('events').getAll();q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)});
    });
    assert.ok(stored.some(x=>x.payload?.bloodPressure?.systolic===145),'Offline check-in was persisted in IndexedDB');
+   await page.getByRole('button',{name:'Emergency SOS'}).click();
+   const savedFile=page.getByRole('button',{name:'Save report as text file'});
+   assert.equal(await savedFile.isDisabled(),true,'Cannot export emergency data without explicit consent');
+   await page.getByRole('checkbox',{name:/Include recent check-ins from this device/}).check();
+   await page.getByText('Recent local entries added (not shared).').waitFor();
+   assert.match(await page.getByLabel('Emergency patient summary').innerText(),/145\/110 mmHg/,'Saved check-in included only after permission');
+   await page.getByRole('checkbox',{name:/I agree to put this information/}).check();
+   assert.equal(await savedFile.isEnabled(),true);
+   const downloadPromise=page.waitForEvent('download');
+   await savedFile.click();
+   const download=await downloadPromise;
+   assert.equal(download.suggestedFilename(),'aura-emergency-handoff.txt');
+   assert.equal(await page.getByText(/Report saved to this device.*NOT been sent/).isVisible(),true);
+   await page.getByRole('button',{name:'Close emergency panel'}).click();
+
    await page.getByRole('button',{name:'My care plan',exact:true}).click();
    assert.equal(await page.getByRole('heading',{name:'Know what happens next'}).isVisible(),true);
    await page.getByRole('button',{name:'I understand my follow-up'}).click();
