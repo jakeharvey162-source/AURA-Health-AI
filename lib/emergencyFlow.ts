@@ -2,7 +2,7 @@ export type EmergencyScenario='labour'|'bleeding'|'breathing'|'fainting'|'other'
 export type EmergencyRegion='za'|'other';
 export const emergencyNumbers:Record<EmergencyRegion,string|null>={za:'112',other:null};
 export function validEmergencyNumber(value:string):boolean{
- return /^\\+?[0-9][0-9 -]{1,17}[0-9]$/.test(value.trim());
+ return /^\+?[0-9][0-9 -]{1,17}[0-9]$/.test(value.trim());
 }
 export function emergencyDialLink(region:EmergencyRegion,otherNumber=''):string|null{
  const number=region==='za'?'112':otherNumber.trim();
@@ -17,7 +17,7 @@ export type EmergencyReport={
  coordinates?:{latitude:number;longitude:number};
 };
 export function prepareEmergencyReport(x:EmergencyReport):string{
- const clean=(value:string)=>value.replace(/[\\r\\n\\t]+/g,' ').slice(0,900).trim();
+ const clean=(value:string)=>value.replace(/[\r\n\t]+/g,' ').slice(0,900).trim();
  const cases:Record<EmergencyScenario,string>={
   labour:'Patient reports possible labour or painful contractions (not clinically confirmed).',
   bleeding:'Patient reports bleeding (amount and cause not clinically confirmed).',
@@ -36,5 +36,5 @@ export function prepareEmergencyReport(x:EmergencyReport):string{
   'Status: Not sent to ambulance or hospital by AURA.',
   'This summary is not a diagnosis. Confirm details with patient and clinician.'
  ];
- return lines.join('\\n');
+ return lines.join('\n');
 }
