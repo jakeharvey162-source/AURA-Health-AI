@@ -51,6 +51,8 @@ try{
    assert.equal(await page.getByRole('dialog',{name:'Emergency help'}).count(),0);
    assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isEnabled(),true);
    assert.equal(await page.getByRole('checkbox',{name:'I have a blood-pressure reading'}).isChecked(),false);
+   await page.getByRole('button',{name:'I think I am in labour'}).click();
+   assert.equal(await page.getByText('You may need medical attention').isVisible(),true);
    await page.getByRole('button',{name:'I have a severe headache'}).click();
    assert.equal(await page.getByText('You may need medical attention').isVisible(),true);
    await page.getByRole('spinbutton',{name:'Weeks pregnant'}).fill('32');
@@ -88,6 +90,8 @@ try{
    assert.equal(horizontalOverflow,false,'No horizontal viewport overflow');
    await page.getByRole('combobox',{name:'Language'}).selectOption('fr');
    assert.equal(await page.getByRole('heading',{name:/Prenez davantage soin/i}).isVisible(),true);
+   await page.getByRole('button',{name:'Je pense être en travail'}).click();
+   assert.equal(await page.getByText('Une consultation médicale peut être nécessaire').isVisible(),true);
    await page.getByRole('button',{name:'J’ai très mal à la tête'}).click();
    assert.equal(await page.getByText('Une consultation médicale peut être nécessaire').isVisible(),true);
    assert.equal(await page.getByRole('button',{name:'Enregistrer ce bilan'}).isVisible(),true);
@@ -95,6 +99,8 @@ try{
    assert.equal(await page.getByRole('combobox',{name:'Language'}).inputValue(),'fr');
    await page.getByRole('combobox',{name:'Language'}).selectOption('zu');
    assert.equal(await page.getByRole('heading',{name:/Nakekela kangcono/i}).isVisible(),true);
+   await page.getByRole('button',{name:'Ngicabanga ukuthi sengiyabeletha'}).click();
+   assert.equal(await page.getByText('Ungase udinge usizo lwezempilo').isVisible(),true);
    await page.getByRole('button',{name:'Ngiphethwe ikhanda elibuhlungu kakhulu'}).click();
    assert.equal(await page.getByText('Ungase udinge usizo lwezempilo').isVisible(),true);
    // Some devices report zero voices until the OS speech engine initializes.
