@@ -49,6 +49,12 @@ try{
    assert.equal(await page.getByRole('link',{name:/Open emergency dialer/}).getAttribute('href'),'tel:999');
    await page.getByRole('button',{name:'Close emergency panel'}).click();
    assert.equal(await page.getByRole('dialog',{name:'Emergency help'}).count(),0);
+   const shortcut=await (await page.request.get(origin+'/manifest.webmanifest')).json();
+   assert.equal(shortcut.shortcuts?.[0]?.url,'/?sos=1');
+   await page.goto(origin+'/?sos=1',{waitUntil:'networkidle'});
+   assert.equal(await page.getByRole('dialog',{name:'Emergency help'}).isVisible(),true,'Installed shortcut opens emergency screen');
+   await page.getByRole('button',{name:'Close emergency panel'}).click();
+
    assert.equal(await page.getByRole('button',{name:'Save this check-in'}).isEnabled(),true);
    assert.equal(await page.getByRole('checkbox',{name:'I have a blood-pressure reading'}).isChecked(),false);
    await page.getByRole('button',{name:'I think I am in labour'}).click();
