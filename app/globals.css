@@ -144,3 +144,43 @@ footer b{color:#f6d28d}footer a{color:#f3d389}
 @media(max-width:800px){.hero{grid-template-columns:1fr;padding:36px 0 24px}.hero-art{height:360px;min-height:360px}.big{font-size:clamp(44px,9vw,65px)}.care-photo{object-position:50% 35%}.section-intro{margin-top:22px}.account-panel{padding:25px 22px}}
 @media(max-width:600px){.wrap{padding:15px}.site-header{gap:10px}.brand{font-size:20px}.brand-mark{width:38px;height:38px}.header-actions{gap:8px}.hero{gap:22px;padding:31px 0 17px}.hero-art{height:280px;min-height:280px;border-radius:23px}.care-art-top,.care-art-bottom{left:16px;right:16px;font-size:9px}.art-card{padding:9px 10px;font-size:11px}.art-card-one{top:30%;left:4%}.art-card-two{right:4%;bottom:23%}.hero-kicker{font-size:9px;letter-spacing:1.2px}.big{font-size:clamp(42px,11vw,56px);letter-spacing:-2.4px}.lead{font-size:16px}.account-panel{padding:23px 18px}.account-panel h3{font-size:23px}.section-intro h2{font-size:26px}.nav button{font-size:13px}.card{padding:20px}.account-toggle{min-height:42px}}
 @media(prefers-reduced-motion:reduce){.hero-art:before,.hero-art:after{animation:none!important}}
+
+
+/* Emergency mode: conspicuous patient-initiated SOS, never a background dispatch */
+.aura-sos-trigger{position:fixed;z-index:45;right:max(18px,env(safe-area-inset-right));bottom:max(22px,env(safe-area-inset-bottom));border:2px solid #ffe4d4;border-radius:999px;background:#c52c39;color:white;display:flex;align-items:center;gap:9px;box-shadow:0 12px 40px #0009,0 0 0 5px #e03c3b33;padding:14px 18px;min-height:64px;font-size:19px;font-weight:900;cursor:pointer}
+.aura-sos-trigger small{font-size:11px;letter-spacing:.03em;font-weight:700}
+.aura-sos-trigger:focus-visible{outline:4px solid #f9dd7c;outline-offset:4px}
+.aura-emergency-panel{position:fixed;inset:0;z-index:90;overflow-y:auto;overscroll-behavior:contain;padding:32px max(16px,calc((100vw - 700px)/2)) 70px;background:rgba(7,9,13,.97);color:#fff;box-shadow:0 0 0 300vw #050609bb}
+.aura-emergency-head{display:flex;align-items:start;justify-content:space-between;gap:15px}
+.aura-emergency-head h2{font-size:clamp(28px,6vw,42px);margin:12px 0;color:#fff}
+.aura-emergency-eyebrow{display:flex;align-items:center;gap:9px;letter-spacing:.1em;font-size:12px;font-weight:800;color:#ffb4a9}
+.aura-emergency-close{border:1px solid #66535a;color:#fff;background:#2c2830;border-radius:14px;min-width:48px;min-height:48px;cursor:pointer;display:grid;place-items:center}
+.aura-emergency-lead{line-height:1.6;color:#dad0ce}
+.aura-emergency-priority{display:flex;align-items:flex-start;gap:12px;background:#58292c;color:#fff0e4;border:1px solid #c66666;padding:15px;border-radius:12px;line-height:1.5}
+.aura-emergency-field{display:grid;gap:12px;margin:20px 0}
+.aura-emergency-field strong{font-size:16px;color:#f8f3ec}
+.aura-emergency-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.aura-emergency-options label{display:flex;align-items:center;gap:10px;padding:13px;border:1px solid #6a5a5b;background:#201d22;border-radius:12px;cursor:pointer;min-height:53px}
+.aura-emergency-panel input[type=radio],.aura-emergency-panel input[type=checkbox]{width:20px;height:20px;flex-shrink:0;accent-color:#e75155}
+.aura-emergency-call{display:flex;align-items:center;justify-content:center;gap:12px;text-align:center;text-decoration:none;color:#16110c;background:linear-gradient(110deg,#fff0a6,#e5be66);border:2px solid #fff0c6;border-radius:16px;padding:19px 14px;font-size:clamp(16px,4vw,22px);font-weight:900;min-height:74px;margin:17px 0}
+.aura-emergency-call:hover{filter:brightness(1.04)}
+.aura-emergency-scenarios{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.aura-emergency-scenarios button{cursor:pointer;border:1px solid #59505b;background:#25232b;color:#f5ece9;border-radius:13px;min-height:61px;padding:10px;font-size:14px;text-align:left}
+.aura-emergency-scenarios button[aria-pressed=true]{border:2px solid #f3d28c;background:#51402b;color:white}
+.aura-emergency-location{display:grid;gap:5px;margin:17px 0 23px}
+.aura-emergency-location .btn{justify-self:start}
+.aura-emergency-location p{color:#d7d0cb;font-size:13px}
+.aura-emergency-handoff{background:#1b1b22;border:1px solid #4d4650;padding:22px;border-radius:18px}
+.aura-emergency-handoff h3{font-size:20px;margin:0}
+.aura-emergency-handoff p{font-size:13px;line-height:1.5;color:#d0c8c5}
+.aura-emergency-handoff pre{border:1px solid #413d45;background:#0d0e13;white-space:pre-wrap;overflow-wrap:anywhere;padding:15px;border-radius:12px;max-height:240px;overflow:auto;font-size:12px;line-height:1.55}
+.aura-emergency-consent{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.45;margin:16px 0;color:#f3e4d4}
+.aura-emergency-actions{display:flex;gap:10px;flex-wrap:wrap}
+.aura-emergency-actions button{flex:1;min-width:180px;justify-content:center}
+.aura-emergency-actions button:disabled{opacity:.42}
+.aura-emergency-handoff .aura-emergency-not-sent{color:#ffe0b3}
+.aura-emergency-details{padding:20px 4px;line-height:1.65}
+.aura-emergency-details summary{cursor:pointer;color:#f1d793;font-weight:750}
+.aura-emergency-inline{width:100%;background:#ba2835;color:#fff;border:1px solid #ffb4a9;justify-content:center;margin:8px 0}
+@media(max-width:600px){.aura-sos-trigger{padding:12px 16px;min-height:58px;bottom:max(15px,env(safe-area-inset-bottom));right:15px}.aura-emergency-panel{padding:17px 15px 90px}.aura-emergency-head h2{font-size:32px}.aura-emergency-options{grid-template-columns:1fr}.aura-emergency-scenarios{grid-template-columns:repeat(2,minmax(0,1fr))}.aura-emergency-handoff{padding:14px}.aura-emergency-actions{flex-direction:column}.aura-emergency-actions button{min-width:0}}
+@media(prefers-reduced-motion:reduce){.aura-sos-trigger{animation:none!important}}
