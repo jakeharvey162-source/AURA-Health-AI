@@ -11,6 +11,7 @@ export default function Home(){
  const translatedFreeText=locale!=='en'&&symptom.trim()&&!knownSymptoms.some(key=>symptom===translations[locale][key]);
  const risk=useMemo(()=>assessMaternalRisk([...(hasReading?[{type:'bp' as const,value:sys},{type:'bp_diastolic' as const,value:dia}]:[]),...(symptom.trim()?[{type:'symptom' as const,text:normalizedSymptom}]:[])]),[sys,dia,normalizedSymptom,hasReading]);
  useEffect(()=>{setLocale(detectLocale(window.localStorage.getItem('aura-language')))},[]);
+ useEffect(()=>{if(new URLSearchParams(window.location.search).get('sos')==='1')setEmergencyOpen(true)},[]);
  function changeLocale(value:AuraLocale){const previous=locale;setLocale(value);window.localStorage.setItem('aura-language',value);if('speechSynthesis'in window)window.speechSynthesis.cancel();setVoicePlaying(false);setVoiceStatus('');setSymptom(current=>{const index=knownSymptoms.findIndex(key=>current===translations[previous][key]);return index<0?current:translations[value][knownSymptoms[index]]});setHandoff(null);setSaved(false)}
  function readGuidance(){
   if(!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window)){setVoiceStatus(t('noVoice'));return;}
