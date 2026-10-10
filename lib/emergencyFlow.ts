@@ -1,3 +1,4 @@
+import type {RecentCheckin} from './emergencyHistory';
 export type EmergencyScenario='labour'|'bleeding'|'breathing'|'fainting'|'other';
 export type EmergencyRegion='za'|'other';
 export const emergencyNumbers:Record<EmergencyRegion,string|null>={za:'112',other:null};
@@ -15,6 +16,7 @@ export type EmergencyReport={
  pregnancyWeeks?:number;
  bloodPressure?:string;
  coordinates?:{latitude:number;longitude:number};
+ recentCheckins?:RecentCheckin[];
 };
 export function prepareEmergencyReport(x:EmergencyReport):string{
  const clean=(value:string)=>value.replace(/[\r\n\t]+/g,' ').slice(0,900).trim();
@@ -33,6 +35,11 @@ export function prepareEmergencyReport(x:EmergencyReport):string{
   'Pregnancy: '+(x.pregnancyWeeks!==undefined && Number.isInteger(x.pregnancyWeeks)&&x.pregnancyWeeks>=1&&x.pregnancyWeeks<=45?x.pregnancyWeeks+' weeks (patient entered)':'Not provided'),
   'Blood pressure: '+(x.bloodPressure?clean(x.bloodPressure)+' (patient entered)':'Not provided'),
   'Location: '+(x.coordinates&&Number.isFinite(x.coordinates.latitude)&&Number.isFinite(x.coordinates.longitude)?x.coordinates.latitude.toFixed(5)+', '+x.coordinates.longitude.toFixed(5)+' (approximate, permission granted)':'Not provided'),
+  'Recent patient-entered local check-ins (optional; not clinician-verified):',
+  ...(x.recentCheckins?.length?x.recentCheckins.slice(0,3).map(r=>{
+    const when=Number.isFinite(Date.parse(r.at))?new Date(r.at).toISOString():'unknown time';
+    return '- '+when+'; symptom: '+clean(r.symptom)+'; BP: '+(r.bloodPressure?clean(r.bloodPressure):'not provided');
+  }):['Not included by patient']),
   'Status: Not sent to ambulance or hospital by AURA.',
   'This summary is not a diagnosis. Confirm details with patient and clinician.'
  ];
