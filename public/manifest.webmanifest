@@ -3,7 +3,15 @@
   "short_name": "AURA",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#07110d",
-  "theme_color": "#0b6b46",
-  "description": "Offline-first health early-warning and care continuity."
+  "background_color": "#080a0e",
+  "theme_color": "#080a0e",
+  "description": "Offline-first health early-warning and care continuity.",
+  "shortcuts": [
+    {
+      "name": "Emergency help (in-app)",
+      "short_name": "SOS",
+      "description": "Opens the AURA emergency help screen; does not call an ambulance automatically",
+      "url": "/?sos=1"
+    }
+  ]
 }
