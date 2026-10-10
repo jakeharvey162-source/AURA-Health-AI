@@ -9,6 +9,18 @@
 5. Copy/share controls require an affirmative checkbox. Copying to the clipboard or opening the OS share sheet does **not** constitute successful hospital delivery. The report states explicitly that it was not sent. A person chooses the recipient and checks that the recipient is a legitimate medical provider.
 6. Real electronic hospital handoff would require a verified receiving facility/integration, patient consent or another valid legal basis, end-to-end security, minimum-necessary data, a timestamped acknowledgement of receipt, audit logging, and operational/clinical governance. **None of these are claimed in this prototype.** There is no automatic ambulance booking, location tracking in the background, hidden SMS, or push to a hospital.
 
+## New: optional recent health check-ins and offline TXT handoff
+
+When the user presses **SOS** inside the installed/web AURA app:
+
+- It shows an **unverified patient-entered** report with reported emergency scenario, optionally entered gestational age/BP and optional geolocation after consent.
+- The user can separately choose to include **up to three most recent local check-ins saved on this device**. Those records are fetched from IndexedDB only after an explicit tap, sanitized and capped; no stored contact, backend account or other private metadata is fetched automatically. Each measurement remains labelled patient-entered, **not clinician verified**.
+- Sharing and exporting require the existing affirmative **report consent** checkbox. A new **Save report as text file** option uses an on-device Blob download, which can work without an internet connection after the PWA is cached. An offline file is not an encrypted medical-record transfer; the patient must protect the file and choose a verified recipient.
+- The app does not send that file or the check-ins to an ambulance, hospital, API or third party. The report explicitly marks hospital delivery as **not sent**.
+- Playwright now verifies that a pre-saved 145/110 mmHg reading appears only after the user opts into local history, that export is disabled before consent, that the download is created, and that no delivery claim is made. Tested on desktop and mobile.
+
+**Emergency priority:** place an emergency call first where possible. Do not delay help to prepare or download a summary. This remains a fictional-data educational prototype pending privacy, security and clinical evaluation.
+
 ## Can AURA work from a locked phone?
 
 **Not through this PWA.** A web page cannot promise a button above the OS lockscreen. On supported Android phones, users can configure the device's built-in Emergency SOS to quickly reach emergency services from a locked device. For AURA itself, the SOS control is visible **whenever the web app is open**. Future native integrations might offer user-configured app shortcuts/approved lockscreen functionality, subject to platform policies, permissions, and on-device acceptance testing. Android 14+ restricts full-screen intents; they are not a general lockscreen bypass. Do not pitch this as implemented.
